@@ -1,4 +1,25 @@
 PSPIN_VERSION ?= undef
+#
+# Verilator configuration
+#
+# PsPIN's build needs Verilator's runtime sources/headers (verilated.cpp, vltstd, ...).
+# Newer/local Verilator installs are commonly referred to by an install prefix
+# ("VERILATOR_HOME"). We derive include paths from that prefix.
+#
+# Important: do NOT export VERILATOR_ROOT to subprocesses; Verilator's launcher
+# script interprets VERILATOR_ROOT as its own installation root and may look for
+# verilator_bin in the wrong place if this is set.
+VERILATOR_HOME ?=
+ifeq ($(strip $(VERILATOR_HOME)),)
+  VERILATOR_ROOT ?=
+else
+  VERILATOR_ROOT ?= $(VERILATOR_HOME)/share/verilator
+  VERILATOR_BIN ?= $(VERILATOR_HOME)/bin/
+endif
+unexport VERILATOR_ROOT
+unexport VERILATOR_BIN
+unexport VERILATOR_HOME
+
 VERILATOR_CMD ?= verilator
 VERILATOR_CC=$(VERILATOR_BIN)$(VERILATOR_CMD)
 TOP_MODULE=pspin_verilator
